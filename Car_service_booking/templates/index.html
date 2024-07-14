@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service Booking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="logo">
+                <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
+            </div>
+            <nav>
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Car Service Booking</h1>
+            <p>Book your next service with us!</p>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container">
+            <div class="card">
+                <h2>Why Choose Us?</h2>
+                <p>We provide reliable car services with a focus on quality and customer satisfaction.</p>
+            </div>
+            <div class="card">
+                <h2>Our Services</h2>
+                <p>Explore a wide range of services including maintenance, repairs, and more.</p>
+                <a href="{{ url_for('services') }}" class="button">View Services</a>
+            </div>
+            <div class="card">
+                <h2>Contact Us</h2>
+                <p>Have questions? Get in touch with our friendly team for assistance.</p>
+                <a href="{{ url_for('contact') }}" class="button">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024  RK Car Service Booking. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
