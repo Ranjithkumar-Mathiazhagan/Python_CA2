@@ -1,11 +1,15 @@
-from flask import Flask
+from flask import Flask,render_template,  redirect, url_for, request, flash, session
 
 
 app = Flask (__name__)
 
 
 @app.route("/")
-def home():
-    return "home page"
+def index():
+    return render_template ("index.html")
 
 
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
