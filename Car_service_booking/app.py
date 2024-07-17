@@ -35,11 +35,11 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-@app.route("/")
+@app.route("/index")
 def index():
     return render_template("index.html")
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -90,6 +90,10 @@ def login():
             flash('Email not registered. Please register first.', 'danger')
     
     return render_template('login.html', form=form)
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
