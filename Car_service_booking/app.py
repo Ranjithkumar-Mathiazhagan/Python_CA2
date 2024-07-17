@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField,SelectField, DateField, TimeField
 from wtforms.validators import DataRequired, Email, Length
 from flask_mysqldb import MySQL
 import bcrypt
@@ -26,6 +26,15 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
+    
+    
+class BookingForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    service_type = SelectField("Service Type", choices=[('maintenance', 'Maintenance'), ('repair', 'Repair'), ('inspection', 'Inspection')], validators=[DataRequired()])
+    date = DateField("Preferred Date", format='%Y-%m-%d', validators=[DataRequired()])
+    time = TimeField("Preferred Time", format='%H:%M', validators=[DataRequired()])
+    submit = SubmitField("Book Now")
 
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
@@ -91,8 +100,31 @@ def login():
     
     return render_template('login.html', form=form)
 
+@app.route("/booking", methods=['GET', 'POST'])
+
+def booking():
+    form = BookingForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        service_type = form.service_type.data
+        date = form.date.data
+        time = form.time.data
+
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO bookings (name, email, service_type, date, time) VALUES (%s, %s, %s, %s, %s)", (name, email, service_type, date, time))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash('Your service has been booked successfully', 'success')
+        return redirect(url_for('submit_book'))
+    return render_template('booking.html', form=form)
 
 
+@app.route('/submit_book')
+def submit_book():
+    
+    return render_template('submit_book')
 
 
 if __name__ == '__main__':
