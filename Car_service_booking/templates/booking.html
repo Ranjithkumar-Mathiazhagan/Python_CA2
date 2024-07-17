@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Service - Car Service Booking</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -16,27 +16,21 @@
             <section class="form-container">
                 <h1>Book Service</h1>
                 <form method="post" action="/booking">
+                    {{ form.hidden_tag() }}
+                 
                     <div class="form-group">
-                        <label for="service">Select Service:</label>
-                        <select id="service" name="service" required>
-                            <option value="">Select Service</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="repair">Repair</option>
-                            <option value="inspection">Inspection</option>
-                        </select>
+                        <label for="service_type">Select Service:</label>
+                        {{ form.service_type(class="form-control") }}
                     </div>
-
                     <div class="form-group">
                         <label for="date">Select Date:</label>
-                        <input type="date" id="date" name="date" required>
+                        {{ form.date(class="form-control") }}
                     </div>
-
                     <div class="form-group">
                         <label for="time">Select Time:</label>
-                        <input type="time" id="time" name="time" required>
+                        {{ form.time(class="form-control") }}
                     </div>
-
-                    <button type="submit">Book Service</button>
+                    <button type="submit" class="btn btn-primary">Book Service</button>
                 </form>
             </section>
         </main>

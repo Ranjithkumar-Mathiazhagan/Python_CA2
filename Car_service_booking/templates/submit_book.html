@@ -1,4 +1,39 @@
-<html>
-<h1> submit_booking</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Submitted</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="logo">
+                <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('booking') }}">Book Another Service</a>
+            </nav>
+        </div>
+    </header>
 
+    <main>
+        <section class="confirmation">
+            <div class="container">
+                <h1>Booking Confirmation</h1>
+                <p>Thank you for booking a {{ service_type }} service with us!</p>
+                <p>We have scheduled your service for {{ date }} at {{ time }}.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Go to Home</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 RK Car Service Booking. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
 </html>

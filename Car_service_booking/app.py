@@ -1,10 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField,SelectField, DateField, TimeField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, DateField, TimeField
 from wtforms.validators import DataRequired, Email, Length
 from flask_mysqldb import MySQL
 import bcrypt
-from flask_wtf.csrf import CSRFProtect
 import os
 from dotenv import load_dotenv
 
@@ -13,9 +12,17 @@ load_dotenv()  # Load environment variables from .env file
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
 
-# CSRF protection
-csrf = CSRFProtect(app)
+# MySQL configuration
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'root')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'car_service_booking')
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+# Initialize MySQL
+mysql = MySQL(app)
+
+# Define forms
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -26,24 +33,14 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
-    
-    
+
 class BookingForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired(), Email()])
     service_type = SelectField("Service Type", choices=[('maintenance', 'Maintenance'), ('repair', 'Repair'), ('inspection', 'Inspection')], validators=[DataRequired()])
     date = DateField("Preferred Date", format='%Y-%m-%d', validators=[DataRequired()])
     time = TimeField("Preferred Time", format='%H:%M', validators=[DataRequired()])
     submit = SubmitField("Book Now")
 
-app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
-app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'root')
-app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'car_service_booking')
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-mysql = MySQL(app)
-
+# Routes
 @app.route("/index")
 def index():
     return render_template("index.html")
@@ -101,31 +98,51 @@ def login():
     return render_template('login.html', form=form)
 
 @app.route("/booking", methods=['GET', 'POST'])
-
 def booking():
     form = BookingForm()
     if form.validate_on_submit():
-        name = form.name.data
-        email = form.email.data
         service_type = form.service_type.data
         date = form.date.data
         time = form.time.data
 
-        cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO bookings (name, email, service_type, date, time) VALUES (%s, %s, %s, %s, %s)", (name, email, service_type, date, time))
-        mysql.connection.commit()
-        cursor.close()
+        if 'user_id' in session:
+            user_id = session['user_id']
+        else:
+            flash('User not logged in', 'danger')
+            return redirect(url_for('login'))  # Redirect to login if user is not logged in
 
-        flash('Your service has been booked successfully', 'success')
-        return redirect(url_for('submit_book'))
+        cursor = mysql.connection.cursor()
+        try:
+            print(f"DEBUG: user_id={user_id}, service_type={service_type}, date={date}, time={time}")  # Debug print
+            cursor.execute("INSERT INTO bookings (user_id, service_type, date, time) VALUES (%s, %s, %s, %s)",
+                           (user_id, service_type, date, time))
+            mysql.connection.commit()
+            cursor.close()
+
+            session['service_type'] = service_type
+            session['date'] = date.strftime('%Y-%m-%d')
+            session['time'] = time.strftime('%H:%M')
+
+            flash('Your service has been booked successfully', 'success')
+            return redirect(url_for('submit_book'))
+        except Exception as e:
+            flash('Booking failed: ' + str(e), 'danger')
+            cursor.close()
+
     return render_template('booking.html', form=form)
 
-
-@app.route('/submit_book')
+@app.route('/submit_book', methods=['GET'])
 def submit_book():
-    
-    return render_template('submit_book')
+    # Ensure session data is correctly set
+    service_type = session.get('service_type')
+    date = session.get('date')
+    time = session.get('time')
 
+    if not service_type or not date or not time:
+        flash('Booking information is missing. Please book your service again.', 'danger')
+        return redirect(url_for('booking'))
+
+    return render_template('submit_book.html', service_type=service_type, date=date, time=time)
 
 if __name__ == '__main__':
     app.run(debug=True)

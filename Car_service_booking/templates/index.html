@@ -4,50 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Service Booking</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <div class="container">
+        <div class="container header-container">
             <div id="logo">
                 <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
             </div>
             <nav>
-                <a href="#">Login</a>
-                <a href="#">Register</a>
+                <a href="{{ url_for('register') }}">Register</a>
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('booking') }}">Book Service</a>
             </nav>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Welcome to Car Service Booking</h1>
-            <p>Book your next service with us!</p>
-        </div>
-    </section>
-
-    <section class="content">
-        <div class="container">
-            <div class="card">
-                <h2>Why Choose Us?</h2>
-                <p>We provide reliable car services with a focus on quality and customer satisfaction.</p>
+    <main>
+        <section class="welcome-section">
+            <div class="container">
+                <h1>Welcome to RK Car Service Booking</h1>
+                <p>Book your car service easily and conveniently.</p>
+                <a href="{{ url_for('booking') }}" class="btn btn-primary">Book Now</a>
             </div>
-            <div class="card">
-                <h2>Our Services</h2>
-                <p>Explore a wide range of services including maintenance, repairs, and more.</p>
-                <a href="{{ url_for('booking') }}" class="button">View Services</a>
-            </div>
-            <div class="card">
-                <h2>Contact Us</h2>
-                <p>Have questions? Get in touch with our friendly team for assistance.</p>
-                <a href="#" class="button">Contact Us</a>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024  RK Car Service Booking. All rights reserved.</p>
+            <p>&copy; 2024 RK Car Service Booking. All rights reserved.</p>
         </div>
     </footer>
 </body>
