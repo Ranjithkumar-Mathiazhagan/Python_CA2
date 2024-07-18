@@ -1,3 +1,63 @@
-<html>
-<h1>My booking</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Booking - Car Service Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div id="logo">
+                <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('booking') }}">Book Another Service</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="form-container">
+                <h1>Update Booking</h1>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-container">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.service_type.label }}
+                        {{ form.service_type(class_='form-control', value=booking.service_type) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.date.label }}
+                        {{ form.date(class_='form-control', value=booking.date.strftime('%Y-%m-%d')) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.time.label }}
+                        {{ form.time(class_='form-control', value=booking.time.strftime('%H:%M')) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class_='btn btn-primary') }}
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Car Service Booking. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
 </html>
