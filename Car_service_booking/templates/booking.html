@@ -4,40 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Service - Car Service Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-           services
-        </header>
+    <header>
+        <div class="container header-container d-flex justify-content-between align-items-center">
+            <div id="logo">
+                <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
+            </div>
+            <nav class="d-flex align-items-center">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('register') }}">Register</a>
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('bookings') }}">My Bookings</a>
+            </nav>
+        </div>
+    </header>
 
-        <main>
-            <section class="form-container">
-                <h1>Book Service</h1>
-                <form method="post" action="/booking">
+    <main>
+        <section class="booking-form-section">
+            <div class="container">
+                <h1 class="text-center">Book Your Service</h1>
+                <p class="text-center">Fill out the form below to schedule your car service. We offer a variety of services to keep your vehicle in top condition.</p>
+                <form method="post" action="{{ url_for('booking') }}" class="form">
                     {{ form.hidden_tag() }}
-                 
+
                     <div class="form-group">
                         <label for="service_type">Select Service:</label>
                         {{ form.service_type(class="form-control") }}
                     </div>
+
                     <div class="form-group">
                         <label for="date">Select Date:</label>
                         {{ form.date(class="form-control") }}
                     </div>
+
                     <div class="form-group">
                         <label for="time">Select Time:</label>
                         {{ form.time(class="form-control") }}
                     </div>
-                    <button type="submit" class="btn btn-primary">Book Service</button>
-                </form>
-            </section>
-        </main>
 
-        <footer class="footer">
-            <p>&copy; 2024 Car RK Service Booking. All rights reserved.</p>
-        </footer>
-    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Book Service</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2024 RK Car Service Booking. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Service Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <div class="container header-container">
+        <div class="container header-container d-flex justify-content-between align-items-center">
             <div id="logo">
                 <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
             </div>
-          
-                <nav>
-                    <a href="{{ url_for('register') }}">Register</a>
-                    <a href="{{ url_for('login') }}">Login</a>
-                    <a href="{{ url_for('bookings') }}">My Bookings</a> 
-                </nav>
-                
+            <nav class="d-flex align-items-center">
+                <a href="{{ url_for('register') }}">Register</a>
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('bookings') }}">My Bookings</a>
+            </nav>
         </div>
     </header>
 
@@ -26,8 +25,16 @@
         <section class="welcome-section">
             <div class="container">
                 <h1>Welcome to RK Car Service Booking</h1>
-                <p>Book your car service easily and conveniently.</p>
+                <p>Book your car service easily and conveniently. Our platform offers a user-friendly interface to schedule your car maintenance, repairs, or inspections with just a few clicks.</p>
                 <a href="{{ url_for('booking') }}" class="btn btn-primary">Book Now</a>
+            </div>
+        </section>
+
+        <section class="description-section">
+            <div class="container">
+                <h2>Why Choose Us?</h2>
+                <p>At RK Car Service Booking, we prioritize your car's health and your convenience. Our experienced technicians are dedicated to providing high-quality service, ensuring that your vehicle runs smoothly and efficiently. With our easy-to-use online booking system, you can schedule appointments at your convenience and get reminders for upcoming services.</p>
+                <p>Whether it's routine maintenance, urgent repairs, or a comprehensive inspection, we are here to ensure that your car receives the best care possible. Our commitment to excellence and customer satisfaction sets us apart in the automotive service industry.</p>
             </div>
         </section>
     </main>

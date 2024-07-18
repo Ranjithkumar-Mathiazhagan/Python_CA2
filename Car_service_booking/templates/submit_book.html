@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Submitted</title>
+    <title>Submit Booking - Car Service Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div class="container">
+    <div class="container">
+        <header>
             <div id="logo">
                 <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
             </div>
@@ -16,24 +17,22 @@
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('booking') }}">Book Another Service</a>
             </nav>
-        </div>
-    </header>
+        </header>
 
-    <main>
-        <section class="confirmation">
-            <div class="container">
-                <h1>Booking Confirmation</h1>
-                <p>Thank you for booking a {{ service_type }} service with us!</p>
-                <p>We have scheduled your service for {{ date }} at {{ time }}.</p>
-                <a href="{{ url_for('index') }}" class="btn btn-primary">Go to Home</a>
-            </div>
-        </section>
-    </main>
+        <main>
+            <section class="confirmation">
+                <div class="container">
+                    <h1>Booking Confirmation</h1>
+                    <p>Thank you for booking a {{ service_type }} service with us!</p>
+                    <p>We have scheduled your service for {{ date }} at {{ time }}.</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Go to Home</a>
+                </div>
+            </section>
+        </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 RK Car Service Booking. All rights reserved.</p>
-        </div>
-    </footer>
+        <footer class="footer">
+            <p>&copy; 2024 Car Service Booking. All rights reserved.</p>
+        </footer>
+    </div>
 </body>
 </html>

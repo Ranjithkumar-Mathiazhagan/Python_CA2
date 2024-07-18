@@ -7,10 +7,8 @@ import bcrypt
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-import datetime
 
-
-load_dotenv()  
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
@@ -22,10 +20,10 @@ app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'root')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'car_service_booking')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# Initialize MySQL
+
 mysql = MySQL(app)
 
-# Define forms
+
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -43,7 +41,6 @@ class BookingForm(FlaskForm):
     time = TimeField("Preferred Time", format='%H:%M', validators=[DataRequired()])
     submit = SubmitField("Book Now")
 
-# Routes
 @app.route("/index")
 def index():
     return render_template("index.html")
@@ -116,7 +113,6 @@ def booking():
 
         cursor = mysql.connection.cursor()
         try:
-            print(f"DEBUG: user_id={user_id}, service_type={service_type}, date={date}, time={time}")  # Debug print
             cursor.execute("INSERT INTO bookings (user_id, service_type, date, time) VALUES (%s, %s, %s, %s)",
                            (user_id, service_type, date, time))
             mysql.connection.commit()
@@ -136,7 +132,6 @@ def booking():
 
 @app.route('/submit_book', methods=['GET'])
 def submit_book():
-   
     service_type = session.get('service_type')
     date = session.get('date')
     time = session.get('time')
@@ -146,6 +141,7 @@ def submit_book():
         return redirect(url_for('booking'))
 
     return render_template('submit_book.html', service_type=service_type, date=date, time=time)
+
 
 @app.route("/bookings", methods=['GET'])
 def bookings():
@@ -159,25 +155,44 @@ def bookings():
     user_bookings = cursor.fetchall()
     cursor.close()
 
-    # Convert datetime objects to strings
+    # Convert date and time to strings
     for booking in user_bookings:
-        if isinstance(booking['date'], (datetime.date, datetime.datetime)):
+        if isinstance(booking['date'], datetime):
             booking['date'] = booking['date'].strftime('%Y-%m-%d')
-        if isinstance(booking['time'], (datetime.time, datetime.datetime)):
-            booking['time'] = booking['time'].strftime('%H:%M')
+        if isinstance(booking['time'], timedelta):
+            total_seconds = booking['time'].total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            booking['time'] = f'{hours:02}:{minutes:02}'
 
     return render_template('bookings.html', bookings=user_bookings)
 
 
+@app.route("/delete_booking/<int:booking_id>", methods=["POST"])
+def delete_booking(booking_id):
+    if 'user_id' not in session:
+        flash('You need to be logged in to delete your bookings', 'danger')
+        return redirect(url_for('login'))
 
+    user_id = session['user_id']
+    cursor = mysql.connection.cursor()
+    try:
+        cursor.execute("DELETE FROM bookings WHERE booking_id = %s AND user_id = %s", (booking_id, user_id))
+        mysql.connection.commit()
+        flash('Booking deleted successfully', 'success')
+    except Exception as e:
+        flash('Failed to delete booking: ' + str(e), 'danger')
+    finally:
+        cursor.close()
 
-@app.route('/edit_booking')
-def edit_booking():
-    
-    return render_template('edit_booking.html')
+    return redirect(url_for('bookings'))
 
-
-
+# Route for logging out
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash('You are now logged out', 'success')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
