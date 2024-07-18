@@ -144,5 +144,21 @@ def submit_book():
 
     return render_template('submit_book.html', service_type=service_type, date=date, time=time)
 
+
+@app.route("/bookings", methods=['GET'])
+def bookings():
+    if 'user_id' not in session:
+        flash('You need to be logged in to view your bookings', 'danger')
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM bookings WHERE user_id = %s", [user_id])
+    user_bookings = cursor.fetchall()
+    cursor.close()
+
+    return render_template('bookings.html', bookings=user_bookings)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
