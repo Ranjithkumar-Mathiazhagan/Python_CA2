@@ -171,5 +171,13 @@ def bookings():
 
 
 
+@app.route('/edit_booking')
+def edit_booking():
+    
+    return render_template('edit_booking.html')
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
