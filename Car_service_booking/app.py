@@ -160,5 +160,6 @@ def bookings():
     return render_template('bookings.html', bookings=user_bookings)
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
