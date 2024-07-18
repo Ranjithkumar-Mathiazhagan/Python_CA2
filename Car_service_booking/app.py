@@ -6,8 +6,11 @@ from flask_mysqldb import MySQL
 import bcrypt
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
+import datetime
 
-load_dotenv()  # Load environment variables from .env file
+
+load_dotenv()  
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
@@ -133,7 +136,7 @@ def booking():
 
 @app.route('/submit_book', methods=['GET'])
 def submit_book():
-    # Ensure session data is correctly set
+   
     service_type = session.get('service_type')
     date = session.get('date')
     time = session.get('time')
@@ -144,7 +147,6 @@ def submit_book():
 
     return render_template('submit_book.html', service_type=service_type, date=date, time=time)
 
-
 @app.route("/bookings", methods=['GET'])
 def bookings():
     if 'user_id' not in session:
@@ -153,11 +155,19 @@ def bookings():
 
     user_id = session['user_id']
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM bookings WHERE user_id = %s", [user_id])
+    cursor.execute("SELECT booking_id, service_type, date, time FROM bookings WHERE user_id = %s", (user_id,))
     user_bookings = cursor.fetchall()
     cursor.close()
 
+    # Convert datetime objects to strings
+    for booking in user_bookings:
+        if isinstance(booking['date'], (datetime.date, datetime.datetime)):
+            booking['date'] = booking['date'].strftime('%Y-%m-%d')
+        if isinstance(booking['time'], (datetime.time, datetime.datetime)):
+            booking['time'] = booking['time'].strftime('%H:%M')
+
     return render_template('bookings.html', bookings=user_bookings)
+
 
 
 
