@@ -39,6 +39,7 @@ class BookingForm(FlaskForm):
     service_type = SelectField("Service Type", choices=[('maintenance', 'Maintenance'), ('repair', 'Repair'), ('inspection', 'Inspection')], validators=[DataRequired()])
     date = DateField("Preferred Date", format='%Y-%m-%d', validators=[DataRequired()])
     time = TimeField("Preferred Time", format='%H:%M', validators=[DataRequired()])
+    vehicle_make = StringField("Vehicle Make", validators=[DataRequired()])
     vehicle_model = StringField("Vehicle Model", validators=[DataRequired()])
     vehicle_year = StringField("Vehicle Year", validators=[DataRequired()])
     license_plate = StringField("License Plate Number", validators=[DataRequired()])
@@ -107,6 +108,7 @@ def booking():
         service_type = form.service_type.data
         date = form.date.data
         time = form.time.data
+        vehicle_make=form.vehicle_make.data
         vehicle_model = form.vehicle_model.data
         vehicle_year = form.vehicle_year.data
         license_plate=form.license_plate.data
@@ -119,14 +121,19 @@ def booking():
 
         cursor = mysql.connection.cursor()
         try:
-            cursor.execute("INSERT INTO bookings (user_id, service_type, date, time) VALUES (%s, %s, %s, %s,%s,%s,%s)",
-                           (user_id, service_type, date, time,vehicle_model,vehicle_year,license_plate))
+            cursor.execute("INSERT INTO bookings (user_id, service_type, date, time,vehicle_make,vehicle_model,vehicle_year,license_plate) VALUES (%s, %s, %s, %s,%s,%s,%s,%s)",
+                           (user_id, service_type, date, time,vehicle_make,vehicle_model,vehicle_year,license_plate))
             mysql.connection.commit()
             cursor.close()
 
             session['service_type'] = service_type
             session['date'] = date.strftime('%Y-%m-%d')
             session['time'] = time.strftime('%H:%M')
+            session['vehicle_make'] = vehicle_make
+            session['vehicle_model'] = vehicle_model
+            session['vehicle_year'] = vehicle_year
+            session['license_plate'] = license_plate
+            
 
             flash('Your service has been booked successfully', 'success')
             return redirect(url_for('submit_book'))
