@@ -39,6 +39,9 @@ class BookingForm(FlaskForm):
     service_type = SelectField("Service Type", choices=[('maintenance', 'Maintenance'), ('repair', 'Repair'), ('inspection', 'Inspection')], validators=[DataRequired()])
     date = DateField("Preferred Date", format='%Y-%m-%d', validators=[DataRequired()])
     time = TimeField("Preferred Time", format='%H:%M', validators=[DataRequired()])
+    vehicle_model = StringField("Vehicle Model", validators=[DataRequired()])
+    vehicle_year = StringField("Vehicle Year", validators=[DataRequired()])
+    license_plate = StringField("License Plate Number", validators=[DataRequired()])
     submit = SubmitField("Book Now")
 
 @app.route("/index")
@@ -104,6 +107,9 @@ def booking():
         service_type = form.service_type.data
         date = form.date.data
         time = form.time.data
+        vehicle_model = form.vehicle_model.data
+        vehicle_year = form.vehicle_year.data
+        license_plate=form.license_plate.data
 
         if 'user_id' in session:
             user_id = session['user_id']
@@ -113,8 +119,8 @@ def booking():
 
         cursor = mysql.connection.cursor()
         try:
-            cursor.execute("INSERT INTO bookings (user_id, service_type, date, time) VALUES (%s, %s, %s, %s)",
-                           (user_id, service_type, date, time))
+            cursor.execute("INSERT INTO bookings (user_id, service_type, date, time) VALUES (%s, %s, %s, %s,%s,%s,%s)",
+                           (user_id, service_type, date, time,vehicle_model,vehicle_year,license_plate))
             mysql.connection.commit()
             cursor.close()
 
