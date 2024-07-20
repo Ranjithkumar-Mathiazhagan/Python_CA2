@@ -7,6 +7,7 @@ import bcrypt
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from flask_mail import Mail,Message
 
 load_dotenv()
 
@@ -19,9 +20,16 @@ app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'root')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'car_service_booking')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT']=465
+app.config['MAIL_USERNAME']='ranjithvoc32@gmail.com'
+app.config['MAIL_PASSWORD']=os.environ.get('PASSWORD')
+app.config['MAIL_USE_TSL']=False
+app.config['MAIL_USE_SSL']=True
 
 mysql = MySQL(app)
+
+mail=Mail(app)
 
 
 class RegisterForm(FlaskForm):
@@ -199,6 +207,8 @@ def delete_booking(booking_id):
         cursor.close()
 
     return redirect(url_for('bookings'))
+
+
 
 # Route for logging out
 @app.route("/logout")
