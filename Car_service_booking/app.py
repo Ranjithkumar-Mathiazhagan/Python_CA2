@@ -133,7 +133,14 @@ def booking():
                            (user_id, service_type, date, time,vehicle_make,vehicle_model,vehicle_year,license_plate))
             mysql.connection.commit()
             cursor.close()
-
+            
+            #test send mail
+            cursor.execute("SELECT email FROM users WHERE ID = %s", [user_id])
+            user_email = cursor.fetchone()['email']
+            msg = Message("Service Booking Confirmation", recipients=[user_email])
+            msg.body = f"Dear {session['user_name']}, your {service_type} service booking is confirmed for {date} at {time}."
+            mail.send(msg)
+            
             session['service_type'] = service_type
             session['date'] = date.strftime('%Y-%m-%d')
             session['time'] = time.strftime('%H:%M')
@@ -209,13 +216,12 @@ def delete_booking(booking_id):
     return redirect(url_for('bookings'))
 
 
-
 # Route for logging out
 @app.route("/logout")
 def logout():
     session.clear()
     flash('You are now logged out', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
