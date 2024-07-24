@@ -48,7 +48,6 @@ class BookingForm(FlaskForm):
     submit = SubmitField("Book Now")
 
 class AdminRegisterForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=8)])
     submit = SubmitField("Register")
@@ -217,16 +216,64 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
-@app.route('/admin_reg')
+@app.route('/admin_reg',methods=['GET', 'POST'])
 def admin_reg():
-    
-    return render_template('admin_reg.html')
+    form = RegisterForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        password = form.password.data
+
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM admins WHERE email = %s", [email])
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            flash('Email already registered. Please use a different email.', 'danger')
+            cursor.close()
+        else:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            try:
+                cursor.execute("INSERT INTO admins ( email, password) VALUES (%s, %s)", (email,hashed_password))
+                mysql.connection.commit()
+                flash('You are now registered and can log in', 'success')
+                return redirect(url_for('admin_login'))
+            except Exception as e:
+                flash('Registration failed: ' + str(e), 'danger')
+            finally:
+                cursor.close()
+    return render_template('admin_reg.html', form=form)
 
 
-@app.route('/admin_login')
+@app.route('/admin_login',methods=['GET', 'POST'])
 def admin_login():  
-    return render_template('admin_login.html')
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
 
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM admins WHERE email = %s", [email])
+        user = cursor.fetchone()
+        cursor.close()
+
+        if user:
+            if bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+                session['admin_id'] = user['admin_id']
+                flash('You are now logged in', 'success')
+                return redirect(url_for('index'))
+            else:
+                flash('Incorrect password. Please try again.', 'danger')
+        else:
+            flash('Email not registered. Please register first.', 'danger')
+    
+    return render_template('admin_login.html', form=form)
+
+
+
+@app.route('/admin_index')
+def admin_admin_index():
+    return render_template('admin_index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
