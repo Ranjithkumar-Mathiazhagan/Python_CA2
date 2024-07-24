@@ -261,7 +261,7 @@ def admin_login():
             if bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
                 session['admin_id'] = user['admin_id']
                 flash('You are now logged in', 'success')
-                return redirect(url_for('index'))
+                return redirect(url_for('admin_index'))
             else:
                 flash('Incorrect password. Please try again.', 'danger')
         else:
@@ -272,7 +272,7 @@ def admin_login():
 
 
 @app.route('/admin_index')
-def admin_admin_index():
+def admin_index():
     return render_template('admin_index.html')
 
 if __name__ == '__main__':
