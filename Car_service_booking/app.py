@@ -273,7 +273,27 @@ def admin_login():
 
 @app.route('/admin_index')
 def admin_index():
-    return render_template('admin_index.html')
+     if 'admin_id' not in session:
+        flash('You need to be logged as Admin in to access the dashboard', 'danger')
+        return redirect(url_for('login'))
+    
+     cursor = mysql.connection.cursor()
+     cursor.execute("SELECT count(ID) as total_users FROM users")
+     total_users = cursor.fetchone()['total_users']
+     
+     cursor = mysql.connection.cursor()
+     cursor.execute("SELECT count(booking_id) as total_bookings FROM bookings")
+     total_bookings = cursor.fetchone()['total_bookings']
+     
+    
+    
+     cursor.close()
+
+     return render_template('admin_index.html',  total_users=total_users,total_bookings=total_bookings)
+                          
+                           
+                
+
 
 if __name__ == '__main__':
     app.run(debug=True)

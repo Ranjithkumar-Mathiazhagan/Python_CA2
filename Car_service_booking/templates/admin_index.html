@@ -1,4 +1,96 @@
-<h1>
-    Admin index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Car Service Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div id="logo">
+                <img src="https://png.pngtree.com/png-vector/20220701/ourmid/pngtree-euro-business-finance-logo-icon-template-png-image_5453777.png" alt="Car Service Logo">
+            </div>
+            <nav>
 
-</h1>
+        
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="admin-overview">
+                <h1>Dashboard</h1>
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Total Users</h2>
+                            <p class="card-text">{{ total_users }}</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Total Bookings</h2>
+                            <p class="card-text">{{ total_bookings }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="manage-bookings">
+                <h2>Manage Bookings</h2>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Service Type</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Vehicle</th>
+                            <th>License Plate</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ booking.user_name }}</td>
+                            <td>{{ booking.service_type }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>{{ booking.time }}</td>
+                            <td>{{ booking.vehicle_make }} {{ booking.vehicle_model }} ({{ booking.vehicle_year }})</td>
+                            <td>{{ booking.license_plate }}</td>
+                            <td>
+                                <form method="post" action="{{ url_for('edit_booking', booking_id=booking.id) }}" style="display: inline-block;">
+                                    {{ csrf_token() }}
+                                    <input type="hidden" name="service_type" value="{{ booking.service_type }}">
+                                    <input type="hidden" name="date" value="{{ booking.date }}">
+                                    <input type="hidden" name="time" value="{{ booking.time }}">
+                                    <input type="hidden" name="vehicle_make" value="{{ booking.vehicle_make }}">
+                                    <input type="hidden" name="vehicle_model" value="{{ booking.vehicle_model }}">
+                                    <input type="hidden" name="vehicle_year" value="{{ booking.vehicle_year }}">
+                                    <input type="hidden" name="license_plate" value="{{ booking.license_plate }}">
+                                    <button type="submit" class="btn btn-info">Edit</button>
+                                </form>
+                                <form method="post" action="{{ url_for('delete_booking', booking_id=booking.id) }}" style="display: inline-block;">
+                                    {{ csrf_token() }}
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Car RK Service Booking. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
