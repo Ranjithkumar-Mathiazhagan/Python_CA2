@@ -134,9 +134,7 @@ def booking():
                            (user_id, service_type, date, time,vehicle_make,vehicle_model,vehicle_year,license_plate))
             mysql.connection.commit()
             cursor.close()
-            
-        
-            
+
             session['service_type'] = service_type
             session['date'] = date.strftime('%Y-%m-%d')
             session['time'] = time.strftime('%H:%M')
@@ -225,6 +223,9 @@ def admin_reg():
     return render_template('admin_reg.html')
 
 
+@app.route('/admin_login')
+def admin_login():  
+    return render_template('admin_login.html')
 
 
 if __name__ == '__main__':
