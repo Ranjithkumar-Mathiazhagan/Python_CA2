@@ -20,16 +20,10 @@ app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'root')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'car_service_booking')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT']=465
-app.config['MAIL_USERNAME']='ranjithvoc32@gmail.com'
-app.config['MAIL_PASSWORD']=os.environ.get('PASSWORD')
-app.config['MAIL_USE_TSL']=False
-app.config['MAIL_USE_SSL']=True
+
 
 mysql = MySQL(app)
 
-mail=Mail(app)
 
 
 class RegisterForm(FlaskForm):
@@ -52,6 +46,13 @@ class BookingForm(FlaskForm):
     vehicle_year = StringField("Vehicle Year", validators=[DataRequired()])
     license_plate = StringField("License Plate Number", validators=[DataRequired()])
     submit = SubmitField("Book Now")
+
+class AdminRegisterForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=8)])
+    submit = SubmitField("Register")
+
 
 @app.route("/index")
 def index():
@@ -134,12 +135,7 @@ def booking():
             mysql.connection.commit()
             cursor.close()
             
-            #test send mail
-            cursor.execute("SELECT email FROM users WHERE ID = %s", [user_id])
-            user_email = cursor.fetchone()['email']
-            msg = Message("Service Booking Confirmation", recipients=[user_email])
-            msg.body = f"Dear {session['user_name']}, your {service_type} service booking is confirmed for {date} at {time}."
-            mail.send(msg)
+        
             
             session['service_type'] = service_type
             session['date'] = date.strftime('%Y-%m-%d')
@@ -223,5 +219,15 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
+@app.route('/admin_reg')
+def admin_reg():
+    
+    return render_template('admin_reg.html')
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
