@@ -76,9 +76,8 @@
                                     <input type="hidden" name="license_plate" value="{{ booking.license_plate }}">
                                     <button type="submit" class="btn btn-info">Edit</button>
                                 </form>
-                                <form method="post" action="#" style="display: inline-block;">
-                                    
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')">Delete</button>
+                                <form method="post" action="{{ url_for('admin_delete', booking_id=booking.booking_id) }}" style="display: inline-block;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')">Cancel</button>
                                 </form>
                             </td>
                         </tr>

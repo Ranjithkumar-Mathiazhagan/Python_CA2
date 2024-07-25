@@ -275,7 +275,7 @@ def admin_login():
 def admin_index():
      if 'admin_id' not in session:
         flash('You need to be logged as Admin in to access the dashboard', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('admin_login'))
     
      cursor = mysql.connection.cursor()
      cursor.execute("SELECT count(ID) as total_users FROM users")
@@ -287,7 +287,7 @@ def admin_index():
      
      cursor=mysql.connection.cursor()
      cursor.execute("""
-                   select b.booking_id,u.ID,b.service_type, b.date, b.time,b.vehicle_make,b.vehicle_model,b.vehicle_year,b.license_plate
+                   select  b.booking_id, u.ID,b.service_type, b.date, b.time,b.vehicle_make,b.vehicle_model,b.vehicle_year,b.license_plate
                    from bookings as b
                    join users u on b.user_id=u.ID
                    ORDER BY b.booking_id ASC """)
@@ -297,9 +297,23 @@ def admin_index():
      cursor.close()
 
      return render_template('admin_index.html',  total_users=total_users,total_bookings=total_bookings,bookings=bookings)
+ 
+@app.route("/admin_delete/<int:booking_id>", methods=["POST"])
+def admin_delete(booking_id):
+
+    cursor = mysql.connection.cursor()
+    try:
+        cursor.execute("DELETE FROM bookings WHERE booking_id = %s" , (booking_id,))
+        mysql.connection.commit()
+        flash('Booking deleted successfully', 'success')
+    except Exception as e:
+        flash('Failed to delete booking: ' + str(e), 'danger')
+    finally:
+        cursor.close()
+
+    return redirect(url_for('admin_index'))
                           
-                           
-                
+                                          
 if __name__ == '__main__':
     app.run(debug=True)
 
