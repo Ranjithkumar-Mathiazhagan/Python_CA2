@@ -285,16 +285,21 @@ def admin_index():
      cursor.execute("SELECT count(booking_id) as total_bookings FROM bookings")
      total_bookings = cursor.fetchone()['total_bookings']
      
-    
-    
+     cursor=mysql.connection.cursor()
+     cursor.execute("""
+                   select b.booking_id,u.ID,b.service_type, b.date, b.time,b.vehicle_make,b.vehicle_model,b.vehicle_year,b.license_plate
+                   from bookings as b
+                   join users u on b.user_id=u.ID
+                   ORDER BY b.booking_id ASC """)
+     
+     bookings= cursor.fetchall()
+                
      cursor.close()
 
-     return render_template('admin_index.html',  total_users=total_users,total_bookings=total_bookings)
+     return render_template('admin_index.html',  total_users=total_users,total_bookings=total_bookings,bookings=bookings)
                           
                            
                 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
 
