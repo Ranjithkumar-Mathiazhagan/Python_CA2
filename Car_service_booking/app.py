@@ -312,7 +312,47 @@ def admin_delete(booking_id):
         cursor.close()
 
     return redirect(url_for('admin_index'))
-                          
+
+
+@app.route('/admin_update/<int:booking_id>',methods=['GET', 'POST'])
+def admin_update(booking_id):
+    if 'admin_id' not in session:
+        flash('You need to be logged as Admin in to access the dashboard', 'danger')
+        return redirect(url_for('admin_login'))
+    
+    cursor = mysql.connection.cursor()
+    
+    if request.method == 'GET':
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", (booking_id,))
+        booking = cursor.fetchone()
+        cursor.close()
+        
+        if not booking:
+            flash('Booking not found', 'danger')
+            return redirect(url_for('admin_index'))
+        return render_template('admin_update.html', booking=booking)
+    
+    elif request.method == 'POST':
+        
+        service_type = request.form['service_type']
+        date = request.form['date']
+        time = request.form['time']
+        
+        try:
+            cursor.execute("""
+                UPDATE bookings
+                SET service_type = %s, date = %s, time = %s
+                WHERE booking_id = %s
+            """, (service_type, date, time, booking_id))
+            mysql.connection.commit()
+            cursor.close()
+            
+            flash('Booking updated successfully', 'success')
+            return redirect(url_for('admin_index'))
+        except Exception as e:
+            flash('Failed to update booking: ' + str(e), 'danger')
+            cursor.close()
+            return redirect(url_for('admin_index'))                    
                                           
 if __name__ == '__main__':
     app.run(debug=True)

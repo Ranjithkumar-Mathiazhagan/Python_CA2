@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Booking - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="{{ url_for('admin_index') }}">Back to Dashboard</a>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Update Booking</h1>
+            <form method="post">
+                <div class="form-group">
+                    <label for="service_type">Service Type</label>
+                    <select class="form-control" id="service_type" name="service_type" required>
+                        <option value="maintenance" {% if booking.service_type == 'maintenance' %}selected{% endif %}>Maintenance</option>
+                        <option value="repair" {% if booking.service_type == 'repair' %}selected{% endif %}>Repair</option>
+                        <option value="inspection" {% if booking.service_type == 'inspection' %}selected{% endif %}>Inspection</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ booking.date }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Time</label>
+                    <input type="time" class="form-control" id="time" name="time" value="{{ booking.time }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Booking</button>
+            </form>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Car RK Service Booking. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
